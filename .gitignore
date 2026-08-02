@@ -67,3 +67,17 @@ vcpkg_installed/
 # test output & cache
 Testing/
 .cache/
+
+
+# Python side stuff (orchestrator etc)
+__pycache__/
+*.pyc
+venv/
+.env
+
+# IDE
+.vscode/
+
+# Large raw data, keeping only filtered/processed DB in repo
+cve_database/data/raw/
+*.zip
