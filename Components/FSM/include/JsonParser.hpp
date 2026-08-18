@@ -1,4 +1,7 @@
-#include <external/json.hpp>
+#
+#pragma once
+
+#include <json.hpp>
 #include <Datatypes.hpp>
 #include <fstream>
 #include <sstream>
@@ -53,7 +56,7 @@ Device DV;
   if(j.contains("open_ports")){
      const auto & port_json_arr=j.at("open_ports");
      for(int i=0;i<port_json_arr.size();i++)
-    { DV.ports.push_back(Port_parser(port_json_arr));}
+    { DV.ports.push_back(Port_parser(port_json_arr[i]));}
                                 }
 
   // to be filled by the FSM
@@ -70,8 +73,8 @@ scanResult scanResult_parser(const json &j){
 
     scanResult SR;  
 
-        SR.status=j.at("vendor").get<std::string>();
-        SR.error=j.at("vendor").get<std::string>();
+        SR.status=j.at("status").get<std::string>();
+        SR.error=j.at("error").is_null() ? "" : j.at("error").get<std::string>(); //if error than log
 
         if(j.contains("discovered_devices")){
             auto & discovered_arr = j.at("discovered_devices");

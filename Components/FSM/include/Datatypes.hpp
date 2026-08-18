@@ -1,3 +1,6 @@
+
+#ifndef DATATYPES_HPP
+#define DATATYPES_HPP
 // we will define the Device, and PortInfo Structs here
 #include <string>
 #include <vector>
@@ -31,3 +34,4 @@ struct scanResult{
 
 };
 
+#endif 
