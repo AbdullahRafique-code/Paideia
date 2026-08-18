@@ -1,25 +1,31 @@
 # This is our nmap integrate network scanner but without the nmap dependency. It uses the socket library to scan for open ports on a given host.
 
-import subprocess
-import xml.etree.ElementTree as ET
+import subprocess # to run nmap from cmd
+import xml.etree.ElementTree as ET 
 import json 
-
+import uuid # scan id
+import datetime # timestamp
 # Function to run nmap scan and return the results in XML format
 def run_network_scan(target_subnet):
     # it runs the nmap command with the specified target subnet and outputs the results in XML format
     # for specfic ports   
-    print(f"Running nmap scan on {target_subnet}...")
+    print(f"Running nmap scan on {target_subnet}")
     nmap_cmd=["nmap","-n","-sS","-sV","--open",
+              
               "-T4","--max-retries","3","--host-timeout","2m", # new flags to speed up the scan and reduce the number of retries and timeout for each host
-        "-p","23,80,443,554,161,8000,8080,8443,37777,35000", # ports to scan for
+        "-p","21,22,23,80,443,554,161,8000,8080,8443,37777,35000", # ports to scan for
         "-oX","-",target_subnet]
 
     # response schema
     response_schema={
+        "scan_id":str(uuid.uuid4()),
+        "timestamp":datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "target_network":target_subnet,
         "status":"success",
         "error":None,
         "discovered_devices":[]
     }
+
 
     try:
         # Run the nmap command and capture the output (raw byte stream)
@@ -122,12 +128,18 @@ def run_network_scan(target_subnet):
             # Append the discovered device information to the list
             print(f"Discovered device: IP={ip_address}, MAC={mac_address}, Open Ports={len(open_ports)}")
             discovered_devices.append({
+
                 "ip":ip_address,
                 "mac":mac_address,
-                "open_ports":open_ports
+                "open_ports":open_ports,
+    
             })
 
+
+
+
         response_schema["discovered_devices"]=discovered_devices
+        response_schema["status"] = "completed" # Updated status flag
         return json.dumps(response_schema,indent=2)
 
 
